@@ -1,70 +1,107 @@
-import { Image, StyleSheet, Platform } from 'react-native';
+import { View, Text, Image, Input, ScrollView } from "tamagui";
+import React from "react";
+import { Stack } from "expo-router";
+import { TouchableOpacity, StyleSheet, TextInput } from "react-native";
+import { Ionicons } from "@expo/vector-icons";
+import { useHeaderHeight } from "@react-navigation/elements";
+import Tasks from "@/components/home-screen/tasks-component";
+import { tasks } from "@/data/tasks";
 
-import { HelloWave } from '@/components/HelloWave';
-import ParallaxScrollView from '@/components/ParallaxScrollView';
-import { ThemedText } from '@/components/ThemedText';
-import { ThemedView } from '@/components/ThemedView';
-
-export default function HomeScreen() {
+const Home = () => {
+  const headerHeight = useHeaderHeight();  
   return (
-    <ParallaxScrollView
-      headerBackgroundColor={{ light: '#A1CEDC', dark: '#1D3D47' }}
-      headerImage={
-        <Image
-          source={require('@/assets/images/partial-react-logo.png')}
-          style={styles.reactLogo}
-        />
-      }>
-      <ThemedView style={styles.titleContainer}>
-        <ThemedText type="title">Welcome!</ThemedText>
-        <HelloWave />
-      </ThemedView>
-      <ThemedView style={styles.stepContainer}>
-        <ThemedText type="subtitle">Step 1: Try it</ThemedText>
-        <ThemedText>
-          Edit <ThemedText type="defaultSemiBold">app/(tabs)/index.tsx</ThemedText> to see changes.
-          Press{' '}
-          <ThemedText type="defaultSemiBold">
-            {Platform.select({ ios: 'cmd + d', android: 'cmd + m' })}
-          </ThemedText>{' '}
-          to open developer tools.
-        </ThemedText>
-      </ThemedView>
-      <ThemedView style={styles.stepContainer}>
-        <ThemedText type="subtitle">Step 2: Explore</ThemedText>
-        <ThemedText>
-          Tap the Explore tab to learn more about what's included in this starter app.
-        </ThemedText>
-      </ThemedView>
-      <ThemedView style={styles.stepContainer}>
-        <ThemedText type="subtitle">Step 3: Get a fresh start</ThemedText>
-        <ThemedText>
-          When you're ready, run{' '}
-          <ThemedText type="defaultSemiBold">npm run reset-project</ThemedText> to get a fresh{' '}
-          <ThemedText type="defaultSemiBold">app</ThemedText> directory. This will move the current{' '}
-          <ThemedText type="defaultSemiBold">app</ThemedText> to{' '}
-          <ThemedText type="defaultSemiBold">app-example</ThemedText>.
-        </ThemedText>
-      </ThemedView>
-    </ParallaxScrollView>
+    <ScrollView>
+      <Stack.Screen
+        options={{
+          headerTransparent: true,
+          headerTitle: "",
+          headerLeft: () => (
+            <TouchableOpacity onPress={() => {}} style={{ marginLeft: 20 }}>
+              <Image
+                source={{
+                  uri: "https://img.freepik.com/free-vector/blue-circle-with-white-user_78370-4707.jpg?size=338&ext=jpg&uid=R57475211&ga=GA1.1.1492282832.1719819828&semt=ais_hybrid",
+                }}
+                style={{ width: 40, height: 40, borderRadius: 10 }}
+              />
+            </TouchableOpacity>
+          ),
+          headerRight: () => (
+            <TouchableOpacity
+              onPress={() => {}}
+              style={{
+                marginRight: 20,
+                backgroundColor: "white",
+                borderRadius: 10,
+                padding: 10,
+                shadowColor: "#171717",
+                shadowOffset: { width: 2, height: 4 },
+                shadowRadius: 3,
+                shadowOpacity: 0.2,
+              }}
+            >
+              <Ionicons name="notifications" size={20} color="black" />
+            </TouchableOpacity>
+          ),
+        }}
+      />
+      <View style={[styles.container, { paddingTop: headerHeight }]}>
+        <Text style={styles.headingText}>Taskido personal task manager.</Text>
+        <View style={styles.searchSection}>
+          <View style={styles.seachBar}>
+            <Ionicons
+              name="search"
+              size={18}
+              color="black"
+              style={{ marginRight: 5 }}
+            />
+            <TextInput
+              placeholder="Search for tasks"
+              // style={{ padding: 10, borderRadius: 10 }}
+            />
+          </View>
+          <TouchableOpacity onPress={() => {}} style={styles.filterBtn}>
+            <Ionicons name="options" size={28} color="white" />
+          </TouchableOpacity>
+        </View>
+
+        <Text style={styles.headingText}>Today's tasks</Text>
+        <View>
+          <Tasks tasks={tasks} />
+        </View>
+      </View>
+    </ScrollView>
   );
-}
+};
+
+export default Home;
 
 const styles = StyleSheet.create({
-  titleContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 8,
+  container: {
+    flex: 1,
+    paddingHorizontal: 20,
   },
-  stepContainer: {
-    gap: 8,
-    marginBottom: 8,
+  headingText: {
+    fontSize: 26,
+    fontWeight: "bold",
+    textTransform: "capitalize",
+    marginTop: 10,
   },
-  reactLogo: {
-    height: 178,
-    width: 290,
-    bottom: 0,
-    left: 0,
-    position: 'absolute',
+  searchSection: {
+    flexDirection: "row",
+    marginVertical: 20,
+  },
+  seachBar: {
+    flexDirection: "row",
+    padding: 8,
+    flex: 1,
+    borderRadius: 10,
+    backgroundColor: "white",
+    alignItems: "center",
+  },
+  filterBtn: {
+    backgroundColor: "#ff7f50",
+    padding: 6,
+    borderRadius: 10,
+    marginLeft: 10,
   },
 });
