@@ -4,6 +4,8 @@ export default function ProfileLayout() {
   return (
     <Stack>
       <Stack.Screen name="index" options={{ headerShown: true }} />
+      {/* [id ] */}
+      
     </Stack>
   );
 }

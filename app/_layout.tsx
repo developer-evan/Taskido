@@ -6,14 +6,21 @@ import {
 import { useFonts } from "expo-font";
 import { Stack } from "expo-router";
 import * as SplashScreen from "expo-splash-screen";
-import { useEffect } from "react";
+import React, { useEffect } from "react";
 import "react-native-reanimated";
 import { useColorScheme } from "@/hooks/useColorScheme";
 import { TamaguiProvider } from "tamagui";
 import config from "../tamagui.config";
+// import {  
+//   QueryClient,
+//   QueryClientProvider,
+// } from '@tanstack/react-query';
+import { QueryClient, QueryClientProvider, useQuery } from '@tanstack/react-query';
 
 // Prevent the splash screen from auto-hiding before asset loading is complete.
 SplashScreen.preventAutoHideAsync();
+
+const client = new QueryClient();
 
 export default function RootLayout() {
   const colorScheme = useColorScheme();
@@ -33,6 +40,7 @@ export default function RootLayout() {
   }
 
   return (
+    <QueryClientProvider client={client}>
     <TamaguiProvider config={config} defaultTheme={colorScheme as any}>
       <ThemeProvider value={colorScheme === "dark" ? DarkTheme : DefaultTheme}>
         <Stack>
@@ -41,5 +49,8 @@ export default function RootLayout() {
         </Stack>
       </ThemeProvider>
     </TamaguiProvider>
+     </QueryClientProvider>
   );
 }
+
+// const userData = useQuery('userData', () => fetch('/user').then(res => res.json()))

@@ -1,11 +1,12 @@
-import { StyleSheet } from "react-native";
+import { StyleSheet, TouchableOpacity } from "react-native";
 import React from "react";
 import { View, Text, TextStyle, Card } from "tamagui";
 import { Task } from "@/data/tasks";
+import { useRouter } from "expo-router";
+import { Colors } from "@/constants/Colors";
 
-const Tasks = (
-  { tasks }: { tasks: Task[] },
-) => {
+const Tasks = ({ tasks }: { tasks: Task[] }) => {
+  const router = useRouter();
   const getStatusStyle = (status: any): TextStyle => ({
     backgroundColor:
       status === "completed"
@@ -22,34 +23,36 @@ const Tasks = (
     textTransform: "capitalize",
   });
   return (
-    <Card style={styles.container}>
+    <View style={styles.container}>
       {tasks.map((task) => (
-        <View key={task.id} style={styles.card}>
-          <Text style={styles.title}>{task.title}</Text>
-          <View
-            style={{
-              flexDirection: "row",
-              justifyContent: "space-between",
-              marginBottom: 10,
-            }}
-          >
-            <View style={styles.statusContainer}>
-              <Text style={styles.label}>Status:</Text>
-              {/* <Text style={getStatusStyle(task.completed)}>
-                {task.completed ? "Completed" : "Not completed"}
-              </Text> */}
-              <Text style={getStatusStyle(task.status)}>{task.status}</Text>
+        <TouchableOpacity
+          key={task.id}
+          onPress={() => router.push(`/(screens)/task-details/${task.id}` as any)}
+        >
+          <Card key={task.id} style={styles.card}>
+            <Text style={styles.title}>{task.title}</Text>
+            <View
+              style={{
+                flexDirection: "row",
+                justifyContent: "space-between",
+                marginBottom: 10,
+              }}
+            >
+              <View style={styles.statusContainer}>
+                <Text style={styles.label}>Status:</Text>
+                <Text style={getStatusStyle(task.status)}>{task.status}</Text>
+              </View>
+              <View style={styles.dueDateContainer}>
+                <Text style={styles.label}>Due date:</Text>
+                <Text style={styles.dueDate}>
+                  {new Date(task.dueDate).toDateString()}
+                </Text>
+              </View>
             </View>
-            <View style={styles.dueDateContainer}>
-              <Text style={styles.label}>Due date:</Text>
-              <Text style={styles.dueDate}>
-                {new Date(task.dueDate).toDateString()}
-              </Text>
-            </View>
-          </View>
-        </View>
+          </Card>
+        </TouchableOpacity>
       ))}
-    </Card>
+    </View>
   );
 };
 
@@ -68,13 +71,14 @@ const styles = StyleSheet.create({
     borderRadius: 15,
     padding: 20,
     margin: 15,
-    backgroundColor: "#fff",
+    // backgroundColor: "#fff",
     // borderWidth: 1,
-    // borderColor: Colors.light.icon,
+    // borderColor: Colors.light.tint,
     shadowColor: "#171717",
     shadowOffset: { width: 2, height: 4 },
     shadowRadius: 3,
     shadowOpacity: 0.2,
+    elevation: 5,
   },
   title: {
     fontSize: 18,
