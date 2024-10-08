@@ -1,18 +1,21 @@
 import React from "react";
-import { View, Text, FlatList, StyleSheet } from "react-native";
+import {FlatList, StyleSheet } from "react-native";
 import axios from "axios";
 import { useQuery } from "@tanstack/react-query";
+import { View, Text, ScrollView } from "tamagui";
+import { fetchUsers } from "@/utils/getUsers";
+import { Stack } from "expo-router";
 // import { useQuery } from 'react-query';
 
-const fetchUsers = async () => {
-  const { data } = await axios.get(
-    "https://jsonplaceholder.typicode.com/users"
-  );
-  return data;
-};
+// const fetchUsers = async () => {
+//   const { data } = await axios.get(
+//     "https://jsonplaceholder.typicode.com/users"
+//   );
+//   return data;
+// };
 
 const TaskoScreen = () => {
-  const { isLoading, error, data } = useQuery({
+  const { isPending, error, data } = useQuery({
     queryKey: ["users"],
     queryFn: async () => fetchUsers(),
   });
@@ -21,9 +24,24 @@ const TaskoScreen = () => {
 
   //   if (isLoading) return <Text>Loading...</Text>;
   //   if (error) return <Text>Error: {error.message}</Text>;
+  if(isPending){
+    return <Text>Loading...</Text>
+  }
+  if(error){
+    return <Text>Error: {error.message}</Text>
+  }
+  
 
   return (
+       
     <View style={styles.container}>
+       <Stack.Screen
+      options={{
+        headerTitle: "Users",
+        // headerStyle: { backgroundColor: "#1E90FF" },
+        // headerTitleStyle: { color: "#fff" },
+      }}
+    /> 
       <FlatList
         data={data}
         keyExtractor={(item) => item.id.toString()}
@@ -36,6 +54,7 @@ const TaskoScreen = () => {
         )}
       />
     </View>
+    
   );
 };
 
@@ -43,7 +62,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     padding: 20,
-    backgroundColor: "#fff",
+    // backgroundColor: "#fff",
   },
   item: {
     padding: 10,
@@ -56,7 +75,7 @@ const styles = StyleSheet.create({
   },
   email: {
     fontSize: 16,
-    color: "#555",
+    // color: "#555",
   },
 });
 
