@@ -20,7 +20,7 @@ const TaskoScreen = () => {
     queryFn: async () => fetchUsers(),
   });
 
-  console.log(data, "ruto ni mbwa");
+  // console.log(data, "ruto ni mbwa");
 
   //   if (isLoading) return <Text>Loading...</Text>;
   //   if (error) return <Text>Error: {error.message}</Text>;
