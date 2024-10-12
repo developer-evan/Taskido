@@ -1,13 +1,18 @@
-import { StyleSheet, TextInput, Alert, ActivityIndicator, ToastAndroid } from "react-native";
+import {
+  StyleSheet,
+  TextInput,
+  Alert,
+  ActivityIndicator,
+  ToastAndroid,
+} from "react-native";
 import React from "react";
 import { View, Text, Button, Input, Label } from "tamagui";
 import { useForm, Controller } from "react-hook-form";
 import { useRouter } from "expo-router";
-import { QueryClient, useMutation, useQueryClient } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { AddNewTask } from "@/utils/addTask";
 import { Colors } from "@/constants/Colors";
-import { Ionicons } from "@expo/vector-icons";
-// import { AddTask as postNewTask } from "";  // Import the AddTask function properly
+import { Plus } from "@tamagui/lucide-icons";
 
 interface TaskFormData {
   title: string;
@@ -29,7 +34,7 @@ const AddTaskScreen = () => {
       return AddNewTask(data);
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["tasks"]});
+      queryClient.invalidateQueries({ queryKey: ["tasks"] });
       reset();
       // Alert.alert("Task added successfully");
       // add ccolor to the toast
@@ -115,14 +120,15 @@ const AddTaskScreen = () => {
               justifyContent: "center",
             }}
           >
-            <Ionicons
+            {/* <Ionicons
               name="add"
               size={20}
               color="#fff"
               style={{
                 fontWeight: "bold",
               }}
-            />
+            /> */}
+            <Plus size={20} color="#fff" />
             <Text
               style={{
                 color: "#fff",

@@ -1,39 +1,44 @@
 import React, { useState } from "react";
 import { StyleSheet, ToastAndroid } from "react-native";
-import { ScrollView, Text, Input, View, Button } from "tamagui";
-
+import { ScrollView, Text, Input, View, Button, Label, Switch } from "tamagui";
 import { useRouter, useLocalSearchParams, Stack } from "expo-router";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { getTaskDetails } from "@/utils/getTaskDetails";
 import updateTask from "@/utils/updateTask";
-// import { updateTask } from "@/utils/updateTask"; // Assume this function is created for updating the task in the backend
+import { Colors } from "@/constants/Colors";
 
 const EditTask = () => {
   const { id } = useLocalSearchParams();
   const router = useRouter();
   const queryClient = useQueryClient();
 
-  // Fetch the task details for the selected task
   const { data: task, isPending } = useQuery({
     queryKey: ["task", id],
     queryFn: () => getTaskDetails(id),
   });
 
-  // Local state for the task's title and description
-  const [title, setTitle] = useState(task?.task?.title || "");
-  const [description, setDescription] = useState(task?.task?.description || "");
-  const [completed, setCompleted] = useState(task?.task?.completed || false);
+  const [localTask, setLocalTask] = useState({
+    title: task?.task?.title || "",
+    description: task?.task?.description || "",
+    completed: task?.task?.completed || false,
+  });
 
-  // Mutation for updating the task
+  if (task && !localTask.title && !localTask.description) {
+    setLocalTask({
+      title: task.task.title || "",
+      description: task.task.description || "",
+      completed: task.task.completed || false,
+    });
+  }
+
   const updateTaskMutation = useMutation({
     mutationFn: async (updatedTask: any) => {
-      return updateTask(id, updatedTask); // API call to update the task
+      return updateTask(id, updatedTask);
     },
     onSuccess: () => {
-      // // // id
       queryClient.invalidateQueries({ queryKey: ["task"] });
       ToastAndroid.show("Task updated successfully", ToastAndroid.LONG);
-      router.push("/tasks"); // Redirect back to tasks list after success
+      router.push("/tasks");
     },
     onError: (error: any) => {
       ToastAndroid.show(
@@ -43,14 +48,27 @@ const EditTask = () => {
     },
   });
 
+  const handleInputChange = (key: string, value: string) => {
+    setLocalTask((prevTask) => ({
+      ...prevTask,
+      [key]: value,
+    }));
+  };
+
+  const handleCompletedToggle = () => {
+    setLocalTask((prevTask) => ({
+      ...prevTask,
+      completed: !prevTask.completed,
+    }));
+  };
+
   const handleSubmit = () => {
     const updatedTask = {
-      title,
-      description,
-      completed,
+      title: localTask.title,
+      description: localTask.description,
+      completed: localTask.completed,
     };
-
-    updateTaskMutation.mutate(updatedTask); // Trigger the update
+    updateTaskMutation.mutate(updatedTask);
   };
 
   if (isPending || !task) {
@@ -63,40 +81,71 @@ const EditTask = () => {
 
   return (
     <ScrollView contentContainerStyle={styles.container}>
-      <Stack.Screen
-        options={{
-          headerTitle: "Task Details",
-          // headerStyle: { backgroundColor: "#1E90FF" },
-          // headerTitleStyle: { color: "#fff" },
-        }}
-      />
-      <Text style={styles.header}>Edit Task</Text>
+      <Text style={styles.header}>Update Task</Text>
+      <Label>Task Title</Label>
       <Input
         style={styles.input}
-        value={title}
-        onChangeText={setTitle}
+        value={localTask.title}
+        onChangeText={(value) => handleInputChange("title", value)}
         placeholder="Task Title"
       />
+      <Label>Task Description</Label>
       <Input
         style={styles.input}
-        value={description}
-        onChangeText={setDescription}
+        value={localTask.description}
+        onChangeText={(value) => handleInputChange("description", value)}
         placeholder="Task Description"
         multiline
       />
       <View style={styles.checkboxContainer}>
-        <Text>Completed:</Text>
-        {/* <Button
-          title={completed ? "Yes" : "No"}
-          onPress={() => setCompleted(!completed)}
-        /> */}
-        <Button onPress={() => setCompleted(!completed)}>
-          {completed ? "Yes" : "No"}
+        <Text onPress={handleCompletedToggle}>
+          {localTask.completed ? "Completed" : "Not Completed"}
+        </Text>
+        {/* <Switch size="$4">
+          <Switch.Thumb animation="bouncy" />
+        </Switch> */}
+        <Switch
+          onCheckedChange={handleCompletedToggle}
+          checked={localTask.completed}
+          style={{
+            backgroundColor: localTask.completed ? Colors.light.tint : "#ccc",
+         
+            color: "#fff",
+          }}
+          size="$4"
+        >
+          {/* <Text>{localTask.completed ? "Yes" : "No"}</Text> */}
+          <Switch.Thumb animation="bouncy" />
+        </Switch>
+
+        <Button
+          onPress={handleCompletedToggle}
+          style={{
+            backgroundColor: localTask.completed ? Colors.light.tint : "#ccc",
+            padding: 10,
+            borderRadius: 5,
+            marginLeft: 10,
+            color: "#fff",
+            display: "none",
+          }}
+        >
+          {localTask.completed ? "Yes" : "No"}
         </Button>
       </View>
 
-      {/* <Button title="Save Changes" onPress={handleSubmit} /> */}
-      <Button onPress={handleSubmit} disabled={updateTaskMutation.isPending}>
+      <Button
+        onPress={handleSubmit}
+        disabled={updateTaskMutation.isPending}
+        style={{
+          backgroundColor: Colors.light.tint,
+          padding: 10,
+          borderRadius: 5,
+          fontWeight: "bold",
+          width: "100%",
+          alignItems: "center",
+          color: "#fff",
+        }}
+      >
         {updateTaskMutation.isPending ? "Updating..." : "Save Changes"}
       </Button>
     </ScrollView>
@@ -109,10 +158,9 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     padding: 20,
-    justifyContent: "center",
   },
   header: {
-    fontSize: 24,
+    fontSize: 18,
     fontWeight: "bold",
     marginBottom: 20,
   },

@@ -9,6 +9,8 @@ import {
   Separator,
   TextStyle,
   TextProps,
+  Dialog,
+  Unspaced,
 } from "tamagui";
 import React from "react";
 import { useRouter, useLocalSearchParams, Stack } from "expo-router";
@@ -23,11 +25,16 @@ import { getTaskDetails } from "@/utils/getTaskDetails";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { Task } from "@/types";
 import { deleteTask } from "@/utils/deleteTaskData";
+import { Colors } from "@/constants/Colors";
+import { Pen, Trash, X } from "@tamagui/lucide-icons";
+import { set } from "react-hook-form";
 
 const TaskDetail = () => {
   const { id } = useLocalSearchParams();
   const router = useRouter();
   const queryClient = useQueryClient();
+  const [isDeleteModalOpen, setIsDeleteModalOpen] = React.useState(false);
+
   const TaskData = useQuery({
     queryKey: ["user", id],
     queryFn: () => getTaskDetails(id),
@@ -49,6 +56,7 @@ const TaskDetail = () => {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["tasks"] });
+      ToastAndroid.show("Task deleted successfully", ToastAndroid.SHORT);
       router.push("/tasks");
     },
     onError: (error: any) => {
@@ -62,6 +70,10 @@ const TaskDetail = () => {
       );
     },
   });
+
+  const handleDeleteClick = () => {
+    setIsDeleteModalOpen(true);
+  };
 
   // const getStatusStyle = (completed: boolean): TextStyle => ({
   // const getStatusStyle = (completed: boolean): StyleProp<TextStyle> => ({
@@ -97,11 +109,11 @@ const TaskDetail = () => {
   return (
     <ScrollView>
       <Stack.Screen
-        options={{
-          headerTitle: "Task Details",
-          // headerStyle: { backgroundColor: "#1E90FF" },
-          // headerTitleStyle: { color: "#fff" },
-        }}
+      // options={{
+      //   headerTitle: "Task Details",
+      //   // headerStyle: { backgroundColor: "#1E90FF" },
+      //   // headerTitleStyle: { color: "#fff" },
+      // }}
       />
 
       <YStack space>
@@ -163,29 +175,77 @@ const TaskDetail = () => {
           onPress={() => {
             router.push(`/(screens)/edit-task/${id}` as any);
           }}
-          style={
-            {
-              // width: "50%",
-              // marginLeft: 10,
-            }
-          }
+          style={{
+            width: "45%",
+            marginLeft: 10,
+            backgroundColor: Colors.light.tint,
+            color: Colors.light.background,
+          }}
+          icon={Pen}
         >
           Edit Task
         </Button>
         <Button
-          onPress={() => {
-            deleteTaskData.mutate(id);
+          // onPress={() => {
+          //   deleteTaskData.mutate(id);
+          // }}
+          onPress={handleDeleteClick}
+          style={{
+            width: "45%",
+            // marginRight: 3,
+            backgroundColor: "#f08080",
+            color: Colors.light.background,
           }}
-          style={
-            {
-              // width: "50%",
-              // marginRight: 3,
-            }
-          }
+          icon={Trash}
         >
-          Delete Task
+          Delete
         </Button>
       </YStack>
+
+      {isDeleteModalOpen && (
+        <Dialog
+          open={isDeleteModalOpen}
+          onOpenChange={() => setIsDeleteModalOpen(false)}
+        >
+          <Dialog.Portal>
+            <Dialog.Overlay />
+            <Dialog.Content>
+              <Dialog.Title>Delete Task</Dialog.Title>
+              <Dialog.Description>
+                Are you sure you want to delete this task?
+              </Dialog.Description>
+              <XStack>
+                <Button
+                  onPress={() => {
+                    deleteTaskData.mutate(id);
+                    setIsDeleteModalOpen(false);
+                  }}
+                  style={{
+                    width: "100%",
+                    marginTop: 10,
+                    backgroundColor: "#f08080",
+                    color: Colors.light.background,
+                  }}
+                >
+                  {deleteTaskData.isPending ? "Deleting..." : "Delete"}
+                </Button>
+              </XStack>
+              <Unspaced>
+                <Dialog.Close asChild>
+                  <Button
+                    position="absolute"
+                    top="$3"
+                    right="$3"
+                    size="$2"
+                    circular
+                    icon={X}
+                  />
+                </Dialog.Close>
+              </Unspaced>
+            </Dialog.Content>
+          </Dialog.Portal>
+        </Dialog>
+      )}
     </ScrollView>
   );
 };

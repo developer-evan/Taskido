@@ -16,7 +16,7 @@ const Home = () => {
     <ScrollView>
       <Stack.Screen
         options={{
-          headerTransparent: true,
+          headerTransparent: false,
           headerTitle: "",
           headerLeft: () => (
             <TouchableOpacity onPress={() => {}} style={{ marginLeft: 20 }}>
@@ -47,7 +47,9 @@ const Home = () => {
           ),
         }}
       />
-      <View style={[styles.container, { paddingTop: headerHeight }]}>
+      <View style={[styles.container,
+        //  { paddingTop: headerHeigt }
+         ]}>
         <Text style={styles.headingText}>Taskido personal task manager.</Text>
         <View style={styles.searchSection}>
           <View style={styles.seachBar}>
