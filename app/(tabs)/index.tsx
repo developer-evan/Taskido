@@ -5,10 +5,13 @@ import { TouchableOpacity, StyleSheet, TextInput } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { useHeaderHeight } from "@react-navigation/elements";
 import Tasks from "@/components/home-screen/tasks-component";
-import { tasks } from "@/data/tasks";
+import { Task } from "@/types";
+
 
 const Home = () => {
   const headerHeight = useHeaderHeight();  
+  const tasks: Task[] = []; // Define the tasks variable
+
   return (
     <ScrollView>
       <Stack.Screen

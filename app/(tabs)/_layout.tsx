@@ -41,6 +41,18 @@ export default function TabLayout() {
         }}
       />
       <Tabs.Screen
+        name="add-task"
+        options={{
+          title: "Add Task",
+          tabBarIcon: ({ color, focused }) => (
+            <TabBarIcon
+              name={focused ? "add" : "add-outline"}
+              color={color}
+            />
+          ),
+        }}
+      />
+      <Tabs.Screen
         name="settings"
         options={{
           title: "Settings",
@@ -58,7 +70,6 @@ export default function TabLayout() {
           title: "Profile",
           tabBarIcon: ({ color, focused }) => (
             <TabBarIcon
-              // name={focused ? "information-circle" : "information-circle-outline"}
               name={focused ? "person" : "person-outline"}
               color={color}
             />
