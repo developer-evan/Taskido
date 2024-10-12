@@ -7,7 +7,7 @@ const Profile = () => {
   return (
     <View style={styles.container}>
       <Text>ProfileS</Text>
-      <Link href="profile/edit-profile">
+      <Link href="/profile/edit-profile">
       edit profile
       </Link>
     </View>

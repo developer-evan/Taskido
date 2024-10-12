@@ -11,11 +11,15 @@ import "react-native-reanimated";
 import { useColorScheme } from "@/hooks/useColorScheme";
 import { TamaguiProvider } from "tamagui";
 import config from "../tamagui.config";
-// import {  
+// import {
 //   QueryClient,
 //   QueryClientProvider,
 // } from '@tanstack/react-query';
-import { QueryClient, QueryClientProvider, useQuery } from '@tanstack/react-query';
+import {
+  QueryClient,
+  QueryClientProvider,
+  useQuery,
+} from "@tanstack/react-query";
 
 // Prevent the splash screen from auto-hiding before asset loading is complete.
 SplashScreen.preventAutoHideAsync();
@@ -27,6 +31,7 @@ export default function RootLayout() {
   const [loaded] = useFonts({
     SpaceMono: require("../assets/fonts/SpaceMono-Regular.ttf"),
     Inter: require("../assets/fonts/Inter-Regular.ttf"),
+    InterBold: require("../assets/fonts/Inter-Regular.ttf"),
   });
 
   useEffect(() => {
@@ -41,15 +46,18 @@ export default function RootLayout() {
 
   return (
     <QueryClientProvider client={client}>
-    <TamaguiProvider config={config} defaultTheme={colorScheme as any}>
-      <ThemeProvider value={colorScheme === "dark" ? DarkTheme : DefaultTheme}>
-        <Stack>
-          <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-          <Stack.Screen name="+not-found" />
-        </Stack>
-      </ThemeProvider>
-    </TamaguiProvider>
-     </QueryClientProvider>
+      <TamaguiProvider config={config} defaultTheme={colorScheme as any}>
+        <ThemeProvider
+          value={colorScheme === "dark" ? DarkTheme : DefaultTheme}
+        >
+          <Stack>
+            <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+            <Stack.Screen name="(screens)" options={{ headerShown: false }} />
+            <Stack.Screen name="+not-found" />
+          </Stack>
+        </ThemeProvider>
+      </TamaguiProvider>
+    </QueryClientProvider>
   );
 }
 

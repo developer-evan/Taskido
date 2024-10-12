@@ -5,15 +5,18 @@ import { TouchableOpacity, StyleSheet, TextInput } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { useHeaderHeight } from "@react-navigation/elements";
 import Tasks from "@/components/home-screen/tasks-component";
-import { tasks } from "@/data/tasks";
+import { Task } from "@/types";
+
 
 const Home = () => {
   const headerHeight = useHeaderHeight();  
+  const tasks: Task[] = []; // Define the tasks variable
+
   return (
     <ScrollView>
       <Stack.Screen
         options={{
-          headerTransparent: true,
+          headerTransparent: false,
           headerTitle: "",
           headerLeft: () => (
             <TouchableOpacity onPress={() => {}} style={{ marginLeft: 20 }}>
@@ -44,7 +47,9 @@ const Home = () => {
           ),
         }}
       />
-      <View style={[styles.container, { paddingTop: headerHeight }]}>
+      <View style={[styles.container,
+        //  { paddingTop: headerHeigt }
+         ]}>
         <Text style={styles.headingText}>Taskido personal task manager.</Text>
         <View style={styles.searchSection}>
           <View style={styles.seachBar}>

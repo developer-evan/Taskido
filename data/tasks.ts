@@ -4,6 +4,7 @@ export interface Task {
   description: string;
   dueDate: string;
   status: string;
+  completed?: boolean;
 }
 
 export const tasks: Task[] = [
