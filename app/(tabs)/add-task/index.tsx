@@ -13,15 +13,28 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { AddNewTask } from "@/utils/addTask";
 import { Colors } from "@/constants/Colors";
 import { Plus } from "@tamagui/lucide-icons";
+import DateTimePickerModal from "react-native-modal-datetime-picker";
 
 interface TaskFormData {
   title: string;
   description: string;
+  dueDate: string;
 }
 
 const AddTaskScreen = () => {
   const router = useRouter();
   const queryClient = useQueryClient();
+  const [isDatePickerVisible, setDatePickerVisibility] = React.useState(false);
+  const [selectedDate, setSelectedDate] = React.useState<string | null>(null); // State to store selected date
+
+  const showDatePicker = () => {
+    setDatePickerVisibility(true);
+  };
+
+  const hideDatePicker = () => {
+    setDatePickerVisibility(false);
+  };
+
   const {
     control,
     handleSubmit,
@@ -36,16 +49,11 @@ const AddTaskScreen = () => {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["tasks"] });
       reset();
-      // Alert.alert("Task added successfully");
-      // add ccolor to the toast
+      setSelectedDate(null); // Reset the selected date after task submission
       ToastAndroid.show("Task added successfully", ToastAndroid.SHORT);
       router.push("/tasks");
     },
     onError: (error: any) => {
-      // Alert.alert(
-      //   "Error",
-      //   error?.response?.data?.message || "Something went wrong"
-      // );
       ToastAndroid.show(
         error?.response?.data?.message || "Something went wrong",
         ToastAndroid.LONG
@@ -97,6 +105,36 @@ const AddTaskScreen = () => {
         <Text style={styles.error}>{errors.description.message}</Text>
       )}
 
+      <Label style={[styles.label]}>Due Date</Label>
+      <Controller
+        control={control}
+        name="dueDate"
+        rules={{ required: "Due date is required" }}
+        render={({ field: { onChange } }) => (
+          <>
+            <DateTimePickerModal
+              isVisible={isDatePickerVisible}
+              mode="date"
+              onConfirm={(date) => {
+                const dateString = date.toISOString();
+                setSelectedDate(dateString); // Update state with selected date
+                onChange(dateString);
+                hideDatePicker();
+              }}
+              onCancel={hideDatePicker}
+            />
+            <Button onPress={showDatePicker} style={styles.input}>
+              {selectedDate
+                ? new Date(selectedDate).toDateString()
+                : "Select Due Date"}
+            </Button>
+          </>
+        )}
+      />
+      {errors.dueDate && (
+        <Text style={styles.error}>{errors.dueDate.message}</Text>
+      )}
+
       <Button
         onPress={handleSubmit(onSubmit)}
         disabled={addTask.isPending}
@@ -104,6 +142,7 @@ const AddTaskScreen = () => {
           backgroundColor: Colors.light.tint,
           padding: 10,
           borderRadius: 5,
+          marginTop: 20,
           width: "100%",
           alignItems: "center",
         }}
@@ -120,14 +159,6 @@ const AddTaskScreen = () => {
               justifyContent: "center",
             }}
           >
-            {/* <Ionicons
-              name="add"
-              size={20}
-              color="#fff"
-              style={{
-                fontWeight: "bold",
-              }}
-            /> */}
             <Plus size={20} color="#fff" />
             <Text
               style={{
@@ -170,6 +201,12 @@ const styles = StyleSheet.create({
   error: {
     color: "red",
     textAlign: "left",
+    alignSelf: "flex-start",
+  },
+  selectedDateText: {
+    fontSize: 14,
+    color: "gray",
+    marginTop: 5,
     alignSelf: "flex-start",
   },
 });

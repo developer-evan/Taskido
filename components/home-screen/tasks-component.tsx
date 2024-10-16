@@ -142,7 +142,8 @@ const Tasks = ({ tasks }: { tasks: Task[] }) => {
                   <View style={styles.dueDateContainer}>
                     <Text style={styles.label}>Due date:</Text>
                     <Text style={styles.dueDate}>
-                      {new Date(task.createdAt).toDateString()}
+                      {/* {new Date(task.createdAt).toDateString()} */}
+                      {new Date(task.dueDate).toDateString()}
                     </Text>
                   </View>
                 </View>
