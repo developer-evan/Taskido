@@ -6,11 +6,22 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { getTaskDetails } from "@/utils/getTaskDetails";
 import updateTask from "@/utils/updateTask";
 import { Colors } from "@/constants/Colors";
+import DateTimePickerModal from "react-native-modal-datetime-picker";
 
 const EditTask = () => {
   const { id } = useLocalSearchParams();
   const router = useRouter();
   const queryClient = useQueryClient();
+
+  const [isDatePickerVisible, setDatePickerVisibility] = useState(false);
+
+  const showDatePicker = () => {
+    setDatePickerVisibility(true);
+  };
+
+  const hideDatePicker = () => {
+    setDatePickerVisibility(false);
+  };
 
   const { data: task, isPending } = useQuery({
     queryKey: ["task", id],
@@ -20,6 +31,7 @@ const EditTask = () => {
   const [localTask, setLocalTask] = useState({
     title: task?.task?.title || "",
     description: task?.task?.description || "",
+    dueDate: task?.task?.dueDate || "",
     completed: task?.task?.completed || false,
   });
 
@@ -27,6 +39,7 @@ const EditTask = () => {
     setLocalTask({
       title: task.task.title || "",
       description: task.task.description || "",
+      dueDate: task.task.dueDate || "",
       completed: task.task.completed || false,
     });
   }
@@ -66,6 +79,7 @@ const EditTask = () => {
     const updatedTask = {
       title: localTask.title,
       description: localTask.description,
+      dueDate: localTask.dueDate,
       completed: localTask.completed,
     };
     updateTaskMutation.mutate(updatedTask);
@@ -97,19 +111,38 @@ const EditTask = () => {
         placeholder="Task Description"
         multiline
       />
+      <DateTimePickerModal
+        isVisible={isDatePickerVisible}
+        mode="date"
+        onConfirm={(date) => {
+          setLocalTask((prevTask) => ({
+            ...prevTask,
+            dueDate: date.toISOString(), // or use date.toDateString() if preferred
+          }));
+          hideDatePicker();
+        }}
+        onCancel={hideDatePicker}
+      />
+
+      <Label>Task Due Date</Label>
+      <Button onPress={showDatePicker} style={styles.input}>
+        {localTask.dueDate
+          ? new Date(localTask.dueDate).toDateString()
+          : "Select Due Date"}
+      </Button>
+
+      <Label>Task Status</Label>
       <View style={styles.checkboxContainer}>
         <Text onPress={handleCompletedToggle}>
           {localTask.completed ? "Completed" : "Not Completed"}
         </Text>
-        {/* <Switch size="$4">
-          <Switch.Thumb animation="bouncy" />
-        </Switch> */}
+
         <Switch
           onCheckedChange={handleCompletedToggle}
           checked={localTask.completed}
           style={{
             backgroundColor: localTask.completed ? Colors.light.tint : "#ccc",
-         
+
             color: "#fff",
           }}
           size="$4"
