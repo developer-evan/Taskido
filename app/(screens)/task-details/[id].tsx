@@ -108,32 +108,13 @@ const TaskDetail = () => {
 
   return (
     <ScrollView>
-      <Stack.Screen
-      // options={{
-      //   headerTitle: "Task Details",
-      //   // headerStyle: { backgroundColor: "#1E90FF" },
-      //   // headerTitleStyle: { color: "#fff" },
-      // }}
-      />
+      <Stack.Screen />
 
       <YStack space>
+        {/* Ensure that the task._id is used as a key to make it unique */}
         <Card key={task._id} style={styles.card}>
           <Text style={styles.title}>{task.task?.title}</Text>
-          {/* <Text
-                  style={{
-                    marginBottom: 10,
-                  }}
-                >
-                  {task.description}
-                </Text> */}
-          <Text
-            // numberOfLines={1}
-            style={{
-              marginBottom: 10,
-            }}
-          >
-            {task.task?.description}
-          </Text>
+          <Text style={{ marginBottom: 10 }}>{task.task?.description}</Text>
           <Separator />
           <View
             style={{
@@ -155,16 +136,14 @@ const TaskDetail = () => {
               </Text>
             </View>
           </View>
-        </Card>
+        </Card>        
       </YStack>
-      {/* edit and delete buttons */}
+
       <YStack
         space
         style={{
-          // padding: 20,
           display: "flex",
           flexDirection: "row",
-          // width: "100%",
           width: 320,
           justifyContent: "center",
           alignItems: "center",
@@ -173,7 +152,7 @@ const TaskDetail = () => {
       >
         <Button
           onPress={() => {
-            router.push(`/(screens)/edit-task/${id}` as any);
+            router.push(`/(screens)/edit-task/${id}`);
           }}
           style={{
             width: "45%",
@@ -186,13 +165,9 @@ const TaskDetail = () => {
           Edit Task
         </Button>
         <Button
-          // onPress={() => {
-          //   deleteTaskData.mutate(id);
-          // }}
           onPress={handleDeleteClick}
           style={{
             width: "45%",
-            // marginRight: 3,
             backgroundColor: "#f08080",
             color: Colors.light.background,
           }}
