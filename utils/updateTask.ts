@@ -7,11 +7,17 @@ interface Task {
   completed: boolean;
 }
 
-const updateTask = async (id: string | string[], updatedTask: any) => {
+const updateTask = async (id: string | string[], updatedTask: any,
+  token:string,
+  user_id:string
+) => {
   try {
     const response = await axios.patch(
-      `http://192.168.100.114:8000/updateTask/${id}`,
-      updatedTask
+      `http://192.168.100.114:8000/api/tasks/updateTask/${id}`,
+      updatedTask,
+      {
+        headers: { Authorization: `Bearer ${token}` },
+      }
     );
     console.log("Task updated successfully:", response.data);
   } catch (error: any) {

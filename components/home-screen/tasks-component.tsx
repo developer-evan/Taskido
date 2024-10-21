@@ -5,16 +5,16 @@ import { useRouter } from "expo-router";
 import { useQuery } from "@tanstack/react-query";
 import { fetchUserTasks } from "@/utils/getTasks";
 import { Task } from "@/types";
-import { Colors } from "@/constants/Colors";
-import { act } from "react-test-renderer";
+import useAuthInfo from "@/hooks/useAuthInfo";
 
 const Tasks = ({ tasks }: { tasks: Task[] }) => {
   const router = useRouter();
+  const authInfo = useAuthInfo();
   const [filter, setFilter] = useState("All"); // State for filter
 
-  const { isLoading, isError, data, error } = useQuery({
+  const { isPending, isError, data, error } = useQuery({
     queryKey: ["tasks"],
-    queryFn: fetchUserTasks,
+    queryFn: () => fetchUserTasks(authInfo.token ?? ""),
   });
 
   const getStatusStyle = (completed: boolean): TextProps["style"] => ({
@@ -39,17 +39,17 @@ const Tasks = ({ tasks }: { tasks: Task[] }) => {
     return true; // For "All" filter, return all tasks
   });
 
-  if (isLoading) {
+  if (isPending) {
     return <ActivityIndicator size="large" color="#f08080" />;
   }
 
-  if (isError) {
-    return (
-      <View>
-        <Text style={{ color: "red" }}>Error: {error.message}</Text>
-      </View>
-    );
-  }
+  // if (isError) {
+  //   return (
+  //     <View>
+  //       <Text style={{ color: "red" }}>Error: {error.message}</Text>
+  //     </View>
+  //   );
+  // }
 
   return (
     <View style={styles.container}>

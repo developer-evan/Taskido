@@ -28,16 +28,18 @@ import { deleteTask } from "@/utils/deleteTaskData";
 import { Colors } from "@/constants/Colors";
 import { Pen, Trash, X } from "@tamagui/lucide-icons";
 import { set } from "react-hook-form";
+import useAuthInfo from "@/hooks/useAuthInfo";
 
 const TaskDetail = () => {
   const { id } = useLocalSearchParams();
   const router = useRouter();
   const queryClient = useQueryClient();
   const [isDeleteModalOpen, setIsDeleteModalOpen] = React.useState(false);
+  const authInfo = useAuthInfo();
 
   const TaskData = useQuery({
     queryKey: ["user", id],
-    queryFn: () => getTaskDetails(id),
+    queryFn: () => getTaskDetails(id, authInfo?.token?? "", authInfo?.user_id?? ""),
   });
 
   const { data: task, isPending, error } = TaskData;

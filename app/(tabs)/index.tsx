@@ -1,16 +1,29 @@
 import { View, Text, Image, Input, ScrollView } from "tamagui";
 import React from "react";
-import { Stack } from "expo-router";
+import { Stack, useRouter } from "expo-router";
 import { TouchableOpacity, StyleSheet, TextInput } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { useHeaderHeight } from "@react-navigation/elements";
 import Tasks from "@/components/home-screen/tasks-component";
 import { Task } from "@/types";
-
+import useAuthInfo from "@/hooks/useAuthInfo";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const Home = () => {
-  const headerHeight = useHeaderHeight();  
+  const headerHeight = useHeaderHeight();
   const tasks: Task[] = []; // Define the tasks variable
+  const authInfo = useAuthInfo();
+  const router = useRouter();
+
+  const handleLogout = async () => {
+    try {
+      await AsyncStorage.multiRemove(["user_id", "username", "session_token", "email"]);
+      console.log("User logged out successfully.");
+      router.push('/(auth)/sign-in/sign-in' as any); // Navigate back to the login screen
+    } catch (error) {
+      console.error("Failed to log out:", error);
+    }
+  };
 
   return (
     <ScrollView>
@@ -30,7 +43,6 @@ const Home = () => {
           ),
           headerRight: () => (
             <TouchableOpacity
-              onPress={() => {}}
               style={{
                 marginRight: 20,
                 backgroundColor: "white",
@@ -41,15 +53,17 @@ const Home = () => {
                 shadowRadius: 3,
                 shadowOpacity: 0.2,
               }}
+              onPress={handleLogout} // Call the logout function here
             >
-              <Ionicons name="notifications" size={20} color="black" />
+              <Ionicons name="log-out" size={28} color="black" />
             </TouchableOpacity>
           ),
         }}
       />
-      <View style={[styles.container,
-        //  { paddingTop: headerHeigt }
-         ]}>
+      <View style={[styles.container]}>
+        <Text style={styles.headingText}>
+          Welcome back, {authInfo.email}!
+        </Text>
         <Text style={styles.headingText}>Taskido personal task manager.</Text>
         <View style={styles.searchSection}>
           <View style={styles.seachBar}>
@@ -61,7 +75,6 @@ const Home = () => {
             />
             <TextInput
               placeholder="Search for tasks"
-              // style={{ padding: 10, borderRadius: 10 }}
             />
           </View>
           <TouchableOpacity onPress={() => {}} style={styles.filterBtn}>

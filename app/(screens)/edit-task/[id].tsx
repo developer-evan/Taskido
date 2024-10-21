@@ -7,11 +7,13 @@ import { getTaskDetails } from "@/utils/getTaskDetails";
 import updateTask from "@/utils/updateTask";
 import { Colors } from "@/constants/Colors";
 import DateTimePickerModal from "react-native-modal-datetime-picker";
+import useAuthInfo from "@/hooks/useAuthInfo";
 
 const EditTask = () => {
   const { id } = useLocalSearchParams();
   const router = useRouter();
   const queryClient = useQueryClient();
+  const authInfo = useAuthInfo();
 
   const [isDatePickerVisible, setDatePickerVisibility] = useState(false);
 
@@ -25,7 +27,7 @@ const EditTask = () => {
 
   const { data: task, isPending } = useQuery({
     queryKey: ["task", id],
-    queryFn: () => getTaskDetails(id),
+    queryFn: () => getTaskDetails(id, authInfo?.token ?? "", authInfo?.user_id ?? ""),
   });
 
   const [localTask, setLocalTask] = useState({
@@ -46,7 +48,7 @@ const EditTask = () => {
 
   const updateTaskMutation = useMutation({
     mutationFn: async (updatedTask: any) => {
-      return updateTask(id, updatedTask);
+      return updateTask(id, updatedTask, authInfo?.token ?? "", authInfo?.user_id ?? "");
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["task"] });

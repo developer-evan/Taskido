@@ -1,50 +1,36 @@
 import React, { useState } from 'react';
-import axios from 'axios';
 import { Text, View, Input } from 'tamagui';
-import { TouchableOpacity, StyleSheet, Alert, ToastAndroid } from 'react-native';
+import { TouchableOpacity, StyleSheet, GestureResponderEvent, ToastAndroid } from 'react-native';
 import { useRouter } from 'expo-router';
+import { useMutation } from '@tanstack/react-query';
+import { handlelogin } from '@/utils/handlelogin';
 
 const SignIn = () => {
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [loading, setLoading] = useState(false);
   const router = useRouter();
+  const [showPassword, setShowPassword] = useState(false);
+  const [values, setValues] = useState({
+    email: '',
+    password: '',
+  });
 
-  const handleSignIn = async () => {
-    if (!email || !password) {
-      Alert.alert('Error', 'Please enter both email and password');
-      return;
-    }
+  // Configure the mutation with onSuccess and onError callbacks
+  const loginMutation = useMutation({
+    mutationFn: async () => handlelogin(values.email, values.password),
+    onSuccess: (data) => {
+      // Navigate to the tabs on successful login
+      router.push('/(tabs)');
+    },
+    onError: (error) => {
+      // Show a toast notification on error
+      ToastAndroid.show('Login failed. Please try again.', ToastAndroid.SHORT);
+      console.error('Login failed:', error);
+    },
+  });
 
-    console.log('Email:', email);
-    console.log('Password:', password);
-
-    setLoading(true);
-    try {
-      console.log('Sending login request...');
-      const response = await axios.post('http://192.168.100.114:8000/api/auth/login', {
-        email,
-        password,
-      });
-
-      console.log(response, 'Login response');
-
-      // Check for successful response status
-      if (response.status === 200) {
-        // Alert.alert('Success', 'Login successful');
-        ToastAndroid.show('Login successful', ToastAndroid.SHORT);
-        router.push('/(tabs)');
-      } else {
-        // Alert.alert('Error', response.data?.message || 'Login failed');
-        // console.log('Login failed:', response.data?.message);
-        ToastAndroid.show(response.data?.message || 'Login failed', ToastAndroid.LONG);
-      }
-    } catch (error) {
-      console.log('Login error:', error);
-      Alert.alert('Error', 'An error occurred during login');
-    } finally {
-      setLoading(false);
-    }
+  const handleSubmit = (e: GestureResponderEvent) => {
+    e.preventDefault();
+    // Trigger the mutation
+    loginMutation.mutate();
   };
 
   return (
@@ -54,8 +40,8 @@ const SignIn = () => {
       <Input
         style={styles.input}
         placeholder="E-mail"
-        value={email}
-        onChangeText={setEmail}
+        value={values.email}
+        onChangeText={(text) => setValues({ ...values, email: text })}
         keyboardType="email-address"
         autoCapitalize="none"
       />
@@ -63,13 +49,13 @@ const SignIn = () => {
       <Input
         style={styles.input}
         placeholder="Password"
-        value={password}
-        onChangeText={setPassword}
+        value={values.password}
+        onChangeText={(text) => setValues({ ...values, password: text })}
         secureTextEntry
       />
 
-      <TouchableOpacity style={styles.button} onPress={handleSignIn} disabled={loading}>
-        <Text style={styles.buttonText}>{loading ? 'Signing in...' : 'Sign in'}</Text>
+      <TouchableOpacity style={styles.button} onPress={handleSubmit} disabled={loginMutation.isPending}>
+        <Text style={styles.buttonText}>{loginMutation.isPending ? 'Signing in...' : 'Sign in'}</Text>
       </TouchableOpacity>
 
       <Text style={styles.footerText}>

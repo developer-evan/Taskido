@@ -14,6 +14,7 @@ import { AddNewTask } from "@/utils/addTask";
 import { Colors } from "@/constants/Colors";
 import { Plus } from "@tamagui/lucide-icons";
 import DateTimePickerModal from "react-native-modal-datetime-picker";
+import useAuthInfo from "@/hooks/useAuthInfo";
 
 interface TaskFormData {
   title: string;
@@ -23,6 +24,7 @@ interface TaskFormData {
 
 const AddTaskScreen = () => {
   const router = useRouter();
+  const authInfo = useAuthInfo();
   const queryClient = useQueryClient();
   const [isDatePickerVisible, setDatePickerVisibility] = React.useState(false);
   const [selectedDate, setSelectedDate] = React.useState<string | null>(null); // State to store selected date
@@ -44,7 +46,7 @@ const AddTaskScreen = () => {
 
   const addTask = useMutation({
     mutationFn: async (data: TaskFormData) => {
-      return AddNewTask(data);
+      return AddNewTask(data, authInfo.token ?? "");
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["tasks"] });
@@ -54,8 +56,10 @@ const AddTaskScreen = () => {
       router.push("/tasks");
     },
     onError: (error: any) => {
+      console.error("Error adding task:", error),
       ToastAndroid.show(
         error?.response?.data?.message || "Something went wrong",
+        
         ToastAndroid.LONG
       );
     },
@@ -194,6 +198,8 @@ const styles = StyleSheet.create({
     width: "100%",
     padding: 10,
     marginBottom: 10,
+    borderWidth: 1,
+    borderColor: "#ccc",
   },
   textArea: {
     height: 100,
