@@ -1,4 +1,5 @@
-import axios from "axios";
+import { axiosInstance } from "@/lib/axiosInstance";
+import config from "@/lib/config";
 
 interface Task {
   id: string | string[];
@@ -7,17 +8,11 @@ interface Task {
   completed: boolean;
 }
 
-const updateTask = async (id: string | string[], updatedTask: any,
-  token:string,
-  user_id:string
-) => {
+const updateTask = async (id: string | string[], updatedTask: any) => {
   try {
-    const response = await axios.patch(
-      `http://192.168.100.114:8000/api/tasks/updateTask/${id}`,
-      updatedTask,
-      {
-        headers: { Authorization: `Bearer ${token}` },
-      }
+    const response = await axiosInstance.patch(
+      `${config.apiUrl}/tasks/updateTask/${id}`,
+      updatedTask
     );
     console.log("Task updated successfully:", response.data);
   } catch (error: any) {

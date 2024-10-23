@@ -46,7 +46,7 @@ const AddTaskScreen = () => {
 
   const addTask = useMutation({
     mutationFn: async (data: TaskFormData) => {
-      return AddNewTask(data, authInfo.token ?? "");
+      return AddNewTask(data);
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["tasks"] });

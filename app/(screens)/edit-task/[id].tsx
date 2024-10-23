@@ -27,7 +27,7 @@ const EditTask = () => {
 
   const { data: task, isPending } = useQuery({
     queryKey: ["task", id],
-    queryFn: () => getTaskDetails(id, authInfo?.token ?? "", authInfo?.user_id ?? ""),
+    queryFn: () => getTaskDetails(id),
   });
 
   const [localTask, setLocalTask] = useState({
@@ -48,7 +48,7 @@ const EditTask = () => {
 
   const updateTaskMutation = useMutation({
     mutationFn: async (updatedTask: any) => {
-      return updateTask(id, updatedTask, authInfo?.token ?? "", authInfo?.user_id ?? "");
+      return updateTask(id, updatedTask);
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["task"] });

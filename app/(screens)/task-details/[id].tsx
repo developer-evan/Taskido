@@ -39,7 +39,8 @@ const TaskDetail = () => {
 
   const TaskData = useQuery({
     queryKey: ["user", id],
-    queryFn: () => getTaskDetails(id, authInfo?.token?? "", authInfo?.user_id?? ""),
+    queryFn: () =>
+      getTaskDetails(id),
   });
 
   const { data: task, isPending, error } = TaskData;
@@ -114,6 +115,8 @@ const TaskDetail = () => {
 
       <YStack space>
         {/* Ensure that the task._id is used as a key to make it unique */}
+        {/* <Card key={task._id} style={styles.card}> */}
+        {/* <Card key={task._id || `task-${id}`} style={styles.card}> */}
         <Card key={task._id} style={styles.card}>
           <Text style={styles.title}>{task.task?.title}</Text>
           <Text style={{ marginBottom: 10 }}>{task.task?.description}</Text>
@@ -138,7 +141,7 @@ const TaskDetail = () => {
               </Text>
             </View>
           </View>
-        </Card>        
+        </Card>
       </YStack>
 
       <YStack

@@ -62,7 +62,7 @@ const Home = () => {
       />
       <View style={[styles.container]}>
         <Text style={styles.headingText}>
-          Welcome back, {authInfo.email}!
+          Welcome back, {authInfo?.email}!
         </Text>
         <Text style={styles.headingText}>Taskido personal task manager.</Text>
         <View style={styles.searchSection}>

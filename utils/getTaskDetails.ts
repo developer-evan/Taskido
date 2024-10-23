@@ -1,17 +1,11 @@
+import { axiosInstance } from "@/lib/axiosInstance";
+import config from "@/lib/config";
 import { Task } from "@/types";
-import axios from "axios";
 
-export async function getTaskDetails(id: string | string[],
-  token:string,
-  user_id:string
-
-): Promise<Task> {
+export async function getTaskDetails(id: string | string[]): Promise<Task> {
   try {
-    const response = await axios.get(
-      `http://192.168.100.114:8000/api/tasks/getTask/${id}`,
-      {
-        headers: { Authorization: `Bearer ${token}` },
-      }
+    const response = await axiosInstance.get(
+      `${config.apiUrl}/tasks/getTask/${id}`
     );
     return response.data as Task;
   } catch (error: any) {

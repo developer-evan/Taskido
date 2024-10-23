@@ -14,7 +14,7 @@ type AuthInfo = {
 function useAuthInfo(): AuthInfo {
   const [authInfo, setAuthInfo] = useState<AuthInfo>({
     user_id: undefined,
-    username: undefined,
+    // username: undefined,
     token: undefined,
     email: undefined,
   });

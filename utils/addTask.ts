@@ -1,4 +1,5 @@
-import axios from "axios";
+import { axiosInstance } from "@/lib/axiosInstance";
+import config from "@/lib/config";
 
 type TaskFormData = {
   title: string;
@@ -6,16 +7,12 @@ type TaskFormData = {
 };
 
 export const AddNewTask = async (newTask: TaskFormData,
-  token: string,
-  // user_id: string
+ 
 ): Promise<TaskFormData> => {
   try {
-    // headers 
-    const headers = { Authorization: `Bearer ${token}` };
-    const response = await axios.post(
-      "http://192.168.100.114:8000/api/tasks/createTask",
+       const response = await axiosInstance.post(
+      `${config.apiUrl}/tasks/createTask`,
       newTask,
-      { headers }
     );
     return response.data as TaskFormData;
   } catch (error) {

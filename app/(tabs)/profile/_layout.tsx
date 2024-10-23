@@ -4,13 +4,13 @@ export default function ProfileLayout() {
   return (
     <Stack>
       <Stack.Screen name="index" options={{ headerShown: false }} />
-      <Stack.Screen 
+      {/* <Stack.Screen 
         name="edit-profile" 
         options={{ 
-          headerShown: true, 
+          headerShown: false, 
           title: "Edit Profile" 
         }} 
-      />
+      /> */}
     </Stack>
   );
 }

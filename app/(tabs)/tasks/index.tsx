@@ -27,7 +27,7 @@ const TaskScreen = () => {
           ),
         }}
       />
-      <View 
+      <View
       // style={{ paddingTop: headerHeight }}
       >
         <Tasks tasks={tasks} />

@@ -11,6 +11,11 @@ export default function TaskDetailsLayout() {
         name="edit-task/[id]"
         options={{ headerTitle: "Edit Task" }}
       />
+      {/* edit-profile  */}
+      <Stack.Screen
+        name="edit-profile/edit-profile"
+        options={{ headerShown: true, title: "Edit Profile" }}
+      />
     </Stack>
   );
 }

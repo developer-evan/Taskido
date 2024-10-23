@@ -1,65 +1,108 @@
 import React, { useState } from 'react';
 import { Text, View, Input } from 'tamagui';
-import { TouchableOpacity, StyleSheet, GestureResponderEvent, ToastAndroid } from 'react-native';
+import { TouchableOpacity, StyleSheet, ToastAndroid } from 'react-native';
 import { useRouter } from 'expo-router';
 import { useMutation } from '@tanstack/react-query';
-import { handlelogin } from '@/utils/handlelogin';
+import { useForm, Controller } from 'react-hook-form';
+import { handlelogin } from '@/utils/handlelogin'; // Ensure handlelogin properly handles errors
+
+interface SignInFormData {
+  email: string;
+  password: string;
+}
 
 const SignIn = () => {
   const router = useRouter();
   const [showPassword, setShowPassword] = useState(false);
-  const [values, setValues] = useState({
-    email: '',
-    password: '',
-  });
+
+  // Use React Hook Form for managing form state
+  const { control, handleSubmit, formState: { errors } } = useForm<SignInFormData>();
 
   // Configure the mutation with onSuccess and onError callbacks
+  // const loginMutation = useMutation({
+  //   mutationFn: async (data: SignInFormData) => handlelogin(data.email, data.password),
+  //   onSuccess: (response) => {
+  //     if (response === '200') {  
+  //       router.push('/(tabs)');
+  //     } else {
+  //       ToastAndroid.show('Invalid credentials, please try again.', ToastAndroid.SHORT);
+  //     }
+  //   },
+  //   onError: (error) => {
+  //     // Show a toast notification on error
+  //     ToastAndroid.show('Login failed. Please try again.', ToastAndroid.SHORT);
+  //     console.error('Login failed:', error);
+  //   },
+  // });
   const loginMutation = useMutation({
-    mutationFn: async () => handlelogin(values.email, values.password),
-    onSuccess: (data) => {
-      // Navigate to the tabs on successful login
-      router.push('/(tabs)');
+    mutationFn: async (data: SignInFormData) => handlelogin(data.email, data.password),
+    onSuccess: (response) => {
+      if (response.success) {
+        router.push('/(tabs)');
+      } else {
+        ToastAndroid.show(response.error || 'Invalid credentials, please try again.', ToastAndroid.SHORT);
+      }
     },
     onError: (error) => {
-      // Show a toast notification on error
       ToastAndroid.show('Login failed. Please try again.', ToastAndroid.SHORT);
       console.error('Login failed:', error);
     },
   });
-
-  const handleSubmit = (e: GestureResponderEvent) => {
-    e.preventDefault();
-    // Trigger the mutation
-    loginMutation.mutate();
+  
+  const onSubmit = (data: SignInFormData) => {
+    // Trigger the mutation with form data
+    loginMutation.mutate(data);
   };
 
   return (
     <View style={styles.container}>
       <Text style={styles.title}>Welcome Back</Text>
 
-      <Input
-        style={styles.input}
-        placeholder="E-mail"
-        value={values.email}
-        onChangeText={(text) => setValues({ ...values, email: text })}
-        keyboardType="email-address"
-        autoCapitalize="none"
+      {/* Email Input */}
+      <Controller
+        control={control}
+        name="email"
+        rules={{ required: "Email is required" }}
+        render={({ field: { onChange, value } }) => (
+          <Input
+            style={styles.input}
+            placeholder="E-mail"
+            value={value}
+            onChangeText={onChange}
+            keyboardType="email-address"
+            autoCapitalize="none"
+          />
+        )}
       />
+      {errors.email && <Text style={styles.error}>{errors.email.message}</Text>}
 
-      <Input
-        style={styles.input}
-        placeholder="Password"
-        value={values.password}
-        onChangeText={(text) => setValues({ ...values, password: text })}
-        secureTextEntry
+      {/* Password Input */}
+      <Controller
+        control={control}
+        name="password"
+        rules={{ required: "Password is required" }}
+        render={({ field: { onChange, value } }) => (
+          <Input
+            style={styles.input}
+            placeholder="Password"
+            value={value}
+            onChangeText={onChange}
+            secureTextEntry={!showPassword}
+          />
+        )}
       />
+      {errors.password && <Text style={styles.error}>{errors.password.message}</Text>}
 
-      <TouchableOpacity style={styles.button} onPress={handleSubmit} disabled={loginMutation.isPending}>
+      {/* Sign In Button */}
+      <TouchableOpacity style={styles.button} onPress={handleSubmit(onSubmit)} disabled={loginMutation.isPending}>
         <Text style={styles.buttonText}>{loginMutation.isPending ? 'Signing in...' : 'Sign in'}</Text>
       </TouchableOpacity>
 
       <Text style={styles.footerText}>
-        Don't have an account? <Text style={styles.link}>Register here</Text>
+        Don't have an account?{' '}
+        <Text style={styles.link} onPress={() => router.push('/sign-up/sign-up')}>
+          Register here
+        </Text>
       </Text>
     </View>
   );
@@ -111,6 +154,10 @@ const styles = StyleSheet.create({
   link: {
     color: '#000',
     fontWeight: 'bold',
+  },
+  error: {
+    color: 'red',
+    marginBottom: 10,
   },
 });
 
