@@ -1,13 +1,13 @@
-import axios from 'axios';
+import { axiosInstance } from "@/lib/axiosInstance";
+import config from "@/lib/config";
 
-export const deleteTask = async (id: string | string[]
-
-): Promise<void> => {
-    try {
-        const response = await axios.delete(`http://192.168.100.114:8000/deleteTask/${id}`);
-        console.log('Task deleted successfully:', response.data);
-    } catch (error) {
-        console.error('Error deleting task:', error);
-    }
+export const deleteTask = async (id: string | string[]): Promise<void> => {
+  try {
+    const response = await axiosInstance.delete(
+      `${config.apiUrl}/tasks/deleteTask/${id}`
+    );
+    console.log("Task deleted successfully:", response.data);
+  } catch (error) {
+    console.error("Error deleting task:", error);
+  }
 };
-

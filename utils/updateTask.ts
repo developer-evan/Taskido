@@ -1,4 +1,5 @@
-import axios from "axios";
+import { axiosInstance } from "@/lib/axiosInstance";
+import config from "@/lib/config";
 
 interface Task {
   id: string | string[];
@@ -9,8 +10,8 @@ interface Task {
 
 const updateTask = async (id: string | string[], updatedTask: any) => {
   try {
-    const response = await axios.patch(
-      `http://192.168.100.114:8000/updateTask/${id}`,
+    const response = await axiosInstance.patch(
+      `${config.apiUrl}/tasks/updateTask/${id}`,
       updatedTask
     );
     console.log("Task updated successfully:", response.data);

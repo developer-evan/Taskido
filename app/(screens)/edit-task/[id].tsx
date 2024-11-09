@@ -7,11 +7,13 @@ import { getTaskDetails } from "@/utils/getTaskDetails";
 import updateTask from "@/utils/updateTask";
 import { Colors } from "@/constants/Colors";
 import DateTimePickerModal from "react-native-modal-datetime-picker";
+import useAuthInfo from "@/hooks/useAuthInfo";
 
 const EditTask = () => {
   const { id } = useLocalSearchParams();
   const router = useRouter();
   const queryClient = useQueryClient();
+  const authInfo = useAuthInfo();
 
   const [isDatePickerVisible, setDatePickerVisibility] = useState(false);
 

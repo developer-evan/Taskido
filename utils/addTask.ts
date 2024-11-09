@@ -1,22 +1,20 @@
-import axios from "axios";
+import { axiosInstance } from "@/lib/axiosInstance";
+import config from "@/lib/config";
 
 type TaskFormData = {
   title: string;
   description: string;
 };
 
-export const AddNewTask = async (newTask: TaskFormData) => {
+export const AddNewTask = async (newTask: TaskFormData,
+ 
+): Promise<TaskFormData> => {
   try {
-    const response = await axios.post(
-      "http://192.168.100.114:8000/createTask",
+       const response = await axiosInstance.post(
+      `${config.apiUrl}/tasks/createTask`,
       newTask,
-      {
-        headers: {
-          "Content-Type": "application/json",
-        },
-      }
     );
-    return response.data;
+    return response.data as TaskFormData;
   } catch (error) {
     throw error;
   }

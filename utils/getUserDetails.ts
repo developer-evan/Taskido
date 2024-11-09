@@ -1,15 +1,15 @@
 import { axiosInstance } from "@/lib/axiosInstance";
 import config from "@/lib/config";
-import { Task } from "@/types";
 
-export async function getTaskDetails(id: string | string[]): Promise<Task> {
+
+export async function getUserDetails(id: string | string[]): Promise<any> {
   try {
     const response = await axiosInstance.get(
-      `${config.apiUrl}/tasks/getTask/${id}`
+      `${config.apiUrl}/users/${id}`
     );
-    return response.data as Task;
+    return response.data as any;
   } catch (error: any) {
-    // Check if it's an Axios error or a generic error
+    
     if (error.response) {
       throw new Error(
         `Error ${error.response.status}: ${error.response.data.message}`
