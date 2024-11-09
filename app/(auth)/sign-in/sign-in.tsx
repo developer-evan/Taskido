@@ -1,10 +1,11 @@
-import React, { useState } from 'react';
-import { Text, View, Input } from 'tamagui';
-import { TouchableOpacity, StyleSheet, ToastAndroid } from 'react-native';
-import { useRouter } from 'expo-router';
-import { useMutation } from '@tanstack/react-query';
-import { useForm, Controller } from 'react-hook-form';
-import { handlelogin } from '@/utils/handlelogin'; // Ensure handlelogin properly handles errors
+import React, { useState } from "react";
+import { Text, View, Input, Button } from "tamagui";
+import { TouchableOpacity, StyleSheet, ToastAndroid } from "react-native";
+import { useRouter } from "expo-router";
+import { useMutation } from "@tanstack/react-query";
+import { useForm, Controller } from "react-hook-form";
+import { handlelogin } from "@/utils/handlelogin"; // Ensure handlelogin properly handles errors
+import { Colors } from "@/constants/Colors";
 
 interface SignInFormData {
   email: string;
@@ -16,13 +17,17 @@ const SignIn = () => {
   const [showPassword, setShowPassword] = useState(false);
 
   // Use React Hook Form for managing form state
-  const { control, handleSubmit, formState: { errors } } = useForm<SignInFormData>();
+  const {
+    control,
+    handleSubmit,
+    formState: { errors },
+  } = useForm<SignInFormData>();
 
   // Configure the mutation with onSuccess and onError callbacks
   // const loginMutation = useMutation({
   //   mutationFn: async (data: SignInFormData) => handlelogin(data.email, data.password),
   //   onSuccess: (response) => {
-  //     if (response === '200') {  
+  //     if (response === '200') {
   //       router.push('/(tabs)');
   //     } else {
   //       ToastAndroid.show('Invalid credentials, please try again.', ToastAndroid.SHORT);
@@ -35,20 +40,24 @@ const SignIn = () => {
   //   },
   // });
   const loginMutation = useMutation({
-    mutationFn: async (data: SignInFormData) => handlelogin(data.email, data.password),
+    mutationFn: async (data: SignInFormData) =>
+      handlelogin(data.email, data.password),
     onSuccess: (response) => {
       if (response.success) {
-        router.push('/(tabs)');
+        router.push("/(tabs)");
       } else {
-        ToastAndroid.show(response.error || 'Invalid credentials, please try again.', ToastAndroid.SHORT);
+        ToastAndroid.show(
+          response.error || "Invalid credentials, please try again.",
+          ToastAndroid.SHORT
+        );
       }
     },
     onError: (error) => {
-      ToastAndroid.show('Login failed. Please try again.', ToastAndroid.SHORT);
-      console.error('Login failed:', error);
+      ToastAndroid.show("Login failed. Please try again.", ToastAndroid.SHORT);
+      console.error("Login failed:", error);
     },
   });
-  
+
   const onSubmit = (data: SignInFormData) => {
     // Trigger the mutation with form data
     loginMutation.mutate(data);
@@ -91,17 +100,30 @@ const SignIn = () => {
           />
         )}
       />
-      {errors.password && <Text style={styles.error}>{errors.password.message}</Text>}
+      {errors.password && (
+        <Text style={styles.error}>{errors.password.message}</Text>
+      )}
 
       {/* Sign In Button */}
       <TouchableOpacity style={styles.button} onPress={handleSubmit(onSubmit)} disabled={loginMutation.isPending}>
         <Text style={styles.buttonText}>{loginMutation.isPending ? 'Signing in...' : 'Sign in'}</Text>
       </TouchableOpacity>
 
+      {/* <Button
+        style={styles.button}
+        onPress={handleSubmit(onSubmit)}
+        disabled={loginMutation.isPending}
+      >
+        {loginMutation.isPending ? "Signing in..." : "Sign in"}
+      </Button> */}
+
       <Text style={styles.footerText}>
-        Don't have an account?{' '}
-        <Text style={styles.link} onPress={() => router.push('/sign-up/sign-up')}>
-          Register here
+        Don't have an account?{" "}
+        <Text
+          style={styles.link}
+          onPress={() => router.push("/sign-up/sign-up")}
+        >
+          Sign up
         </Text>
       </Text>
     </View>
@@ -111,52 +133,53 @@ const SignIn = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
+    justifyContent: "center",
+    alignItems: "center",
     paddingHorizontal: 20,
-    backgroundColor: '#fff',
+    // backgroundColor: '#fff',
   },
   title: {
     fontSize: 24,
-    fontWeight: 'bold',
+    fontWeight: "bold",
     marginBottom: 20,
   },
   input: {
-    width: '100%',
+    width: "100%",
     height: 50,
-    borderColor: '#ccc',
+    // borderColor: '#ccc',
     borderWidth: 1,
     borderRadius: 8,
     paddingHorizontal: 10,
     marginBottom: 15,
     fontSize: 16,
-    color: '#000',
+    // color: '#000',
   },
   button: {
-    width: '100%',
+    width: "100%",
     height: 50,
-    backgroundColor: '#000',
-    justifyContent: 'center',
-    alignItems: 'center',
+    backgroundColor: Colors.light.tint,
+    justifyContent: "center",
+    alignItems: "center",
     borderRadius: 8,
     marginTop: 10,
   },
   buttonText: {
-    color: '#fff',
+    color: "#fff",
     fontSize: 18,
-    fontWeight: 'bold',
+    fontWeight: "bold",
   },
   footerText: {
     marginTop: 20,
     fontSize: 14,
-    color: '#888',
+    color: "#888",
   },
   link: {
-    color: '#000',
-    fontWeight: 'bold',
+     color: Colors.light.tint,
+    fontWeight: "bold",
+    fontStyle: "italic",
   },
   error: {
-    color: 'red',
+    color: "red",
     marginBottom: 10,
   },
 });

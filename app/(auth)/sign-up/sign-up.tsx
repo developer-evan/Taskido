@@ -1,14 +1,11 @@
 import React from "react";
-import { Text, View, Input } from "tamagui";
-import {
-  TouchableOpacity,
-  StyleSheet,
-  ToastAndroid,
-} from "react-native";
+import { Text, View, Input, Button } from "tamagui";
+import { TouchableOpacity, StyleSheet, ToastAndroid } from "react-native";
 import { useRouter } from "expo-router";
 import { useMutation } from "@tanstack/react-query";
 import { useForm, Controller } from "react-hook-form";
 import { handleSignUp } from "@/utils/handleSignUp";
+import { Colors } from "@/constants/Colors";
 
 interface SignUpFormData {
   email: string;
@@ -20,7 +17,11 @@ const SignUp = () => {
   const router = useRouter();
 
   // Use React Hook Form for managing form state and validation
-  const { control, handleSubmit, formState: { errors } } = useForm<SignUpFormData>();
+  const {
+    control,
+    handleSubmit,
+    formState: { errors },
+  } = useForm<SignUpFormData>();
 
   const signUpMutation = useMutation({
     mutationFn: async (data: SignUpFormData) =>
@@ -30,7 +31,10 @@ const SignUp = () => {
       router.push("/sign-in/sign-in"); // Navigate to sign-in after successful registration
     },
     onError: (error) => {
-      ToastAndroid.show("Sign-up failed. Please try again.", ToastAndroid.SHORT);
+      ToastAndroid.show(
+        "Sign-up failed. Please try again.",
+        ToastAndroid.SHORT
+      );
       console.error("Sign-up failed:", error);
     },
   });
@@ -57,7 +61,9 @@ const SignUp = () => {
           />
         )}
       />
-      {errors.username && <Text style={styles.error}>{errors.username.message}</Text>}
+      {errors.username && (
+        <Text style={styles.error}>{errors.username.message}</Text>
+      )}
 
       {/* Email Input */}
       <Controller
@@ -92,9 +98,19 @@ const SignUp = () => {
           />
         )}
       />
-      {errors.password && <Text style={styles.error}>{errors.password.message}</Text>}
-
+      {errors.password && (
+        <Text style={styles.error}>{errors.password.message}</Text>
+      )}
       {/* Sign Up Button */}
+      {/* <TouchableOpacity
+        style={styles.button}
+        onPress={handleSubmit(onSubmit)}
+        disabled={signUpMutation.isPending}
+      >
+        <Text style={styles.buttonText}>
+          {signUpMutation.isPending ? "Signing up..." : "Sign up"}
+        </Text>
+      </TouchableOpacity> */}
       <TouchableOpacity
         style={styles.button}
         onPress={handleSubmit(onSubmit)}
@@ -104,6 +120,13 @@ const SignUp = () => {
           {signUpMutation.isPending ? "Signing up..." : "Sign up"}
         </Text>
       </TouchableOpacity>
+      {/* <Button
+        style={styles.button}
+        onPress={handleSubmit(onSubmit)}
+        disabled={signUpMutation.isPending}
+      >
+        {signUpMutation.isPending ? "Signing up..." : "Sign up"}
+      </Button> */}
 
       <Text style={styles.footerText}>
         Already have an account?{" "}
@@ -111,7 +134,7 @@ const SignUp = () => {
           style={styles.link}
           onPress={() => router.push("/sign-in/sign-in")}
         >
-          Sign in here
+          Sign in
         </Text>
       </Text>
     </View>
@@ -124,7 +147,7 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
     paddingHorizontal: 20,
-    backgroundColor: "#fff",
+    // backgroundColor: "#fff",
   },
   title: {
     fontSize: 24,
@@ -134,18 +157,18 @@ const styles = StyleSheet.create({
   input: {
     width: "100%",
     height: 50,
-    borderColor: "#ccc",
+    // borderColor: "#ccc",
     borderWidth: 1,
     borderRadius: 8,
     paddingHorizontal: 10,
     marginBottom: 15,
     fontSize: 16,
-    color: "#000",
+    // color: "#000",
   },
   button: {
     width: "100%",
     height: 50,
-    backgroundColor: "#000",
+    backgroundColor: Colors.light.tint,
     justifyContent: "center",
     alignItems: "center",
     borderRadius: 8,
@@ -162,8 +185,9 @@ const styles = StyleSheet.create({
     color: "#888",
   },
   link: {
-    color: "#000",
+    color: Colors.light.tint,
     fontWeight: "bold",
+    fontStyle: "italic",
   },
   error: {
     color: "red",

@@ -1,21 +1,28 @@
 import React from "react";
 import { Button, Text, View } from "tamagui";
 import { StyleSheet, TouchableOpacity } from "react-native";
-import { useRouter } from "expo-router";
+import { Stack, useRouter } from "expo-router";
+import { LinearGradient } from "expo-linear-gradient";
 
 const SplashS = () => {
   const router = useRouter();
 
   return (
-    <View style={styles.container}>
-      <Text style={styles.title}>Splash</Text>
+    <LinearGradient colors={["#A18CD1", "#FBC2EB"]} style={styles.container}>
+      {/* <Stack.Screen
+        // name="index"
+        // component={SplashS}
+        options={{ headerShown: false }}
+      /> */}
+      <Text style={styles.title}>Welcome to Taskify</Text>
+      <Text style={styles.subtitle}>Your Personal Task Manager</Text>
       <TouchableOpacity
         style={styles.button}
         onPress={() => router.push("/(auth)/sign-in/sign-in" as any)}
       >
-        <Text style={styles.buttonText}>Click me</Text>
+        <Text style={styles.buttonText}>Get Started</Text>
       </TouchableOpacity>
-    </View>
+    </LinearGradient>
   );
 };
 
@@ -26,20 +33,29 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
-    // backgroundColor: "#f0f0f0",
   },
   title: {
-    fontSize: 24,
+    fontSize: 32,
     fontWeight: "bold",
-    marginBottom: 20,
+    color: "#fff",
+    marginBottom: 10,
+    textAlign: "center",
+  },
+  subtitle: {
+    fontSize: 18,
+    color: "#fff",
+    marginBottom: 40,
+    textAlign: "center",
   },
   button: {
-    backgroundColor: "#6200ee",
-    padding: 10,
-    borderRadius: 5,
+    backgroundColor: "#4A148C",
+    paddingVertical: 12,
+    paddingHorizontal: 30,
+    borderRadius: 25,
   },
   buttonText: {
     color: "#fff",
-    fontSize: 16,
+    fontSize: 18,
+    fontWeight: "bold",
   },
 });

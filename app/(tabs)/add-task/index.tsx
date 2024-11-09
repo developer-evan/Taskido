@@ -57,11 +57,11 @@ const AddTaskScreen = () => {
     },
     onError: (error: any) => {
       console.error("Error adding task:", error),
-      ToastAndroid.show(
-        error?.response?.data?.message || "Something went wrong",
-        
-        ToastAndroid.LONG
-      );
+        ToastAndroid.show(
+          error?.response?.data?.message || "Something went wrong",
+
+          ToastAndroid.LONG
+        );
     },
   });
 
@@ -199,7 +199,7 @@ const styles = StyleSheet.create({
     padding: 10,
     marginBottom: 10,
     borderWidth: 1,
-    borderColor: "#ccc",
+    borderColor: "gray",
   },
   textArea: {
     height: 100,
